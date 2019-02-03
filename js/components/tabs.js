@@ -1,9 +1,13 @@
 import Component from '../component.js';
 
 export default class Tabs extends Component {
-  constructor({ element, tabs }) {
+  constructor({ element }) {
     super({ element });
-    this._tabs = tabs;
+
+
+    this._tabs = [];
+    Array.prototype.forEach.call(this._element.children, el => this._getTabObject(el));
+
     this._currentTab = 0;
 
     this.getCurrentTabData = this.getCurrentTabData.bind(this);
@@ -19,12 +23,23 @@ export default class Tabs extends Component {
 
       this._highlightActiveTab(event.target);
 
-      this.emit('tab-selected', this.getCurrentTabData());
+      const tabSelectEvent = new CustomEvent('tab-selected', {
+        detail: {
+          title: this._tabs[this._currentTab].title,
+          content: this._tabs[this._currentTab].content,
+        },
+      });
+      this._element.dispatchEvent(tabSelectEvent);
     });
   }
 
   getCurrentTabData() {
     return this._tabs[this._currentTab];
+  }
+
+  _getTabObject(el) {
+    const tabTitle = el.getAttribute('title') ? el.getAttribute('title') : 'no-name';
+    this._tabs.push({ title: tabTitle, content: el.textContent });
   }
 
   _highlightActiveTab(currentTab) {
@@ -34,8 +49,8 @@ export default class Tabs extends Component {
   }
 
   _render() {
-    this._element.innerHTML = `
-    <div class="tab">
+    const tabHtml = `
+    <div class="tabs-list">
     ${this._tabs.map((tab, i) => `
       <button data-element = "tab-header" data-tab-id = "${i}">${tab.title}</button>
       `).join('')}  
@@ -45,5 +60,6 @@ export default class Tabs extends Component {
       ${this.getCurrentTabData().content}
     </div>
     `;
+    this._element.insertAdjacentHTML('afterbegin', tabHtml);
   }
 }
