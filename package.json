@@ -1,0 +1,16 @@
+{
+  "name": "tabs",
+  "version": "1.0.0",
+  "description": "Advanced Tabs component for mate academy",
+  "main": "index.html",
+  "scripts": {
+    "test": "./node_modules/.bin/eslint ."
+  },
+  "author": "Oleksandr Korneiko",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.13.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
+  }
+}
