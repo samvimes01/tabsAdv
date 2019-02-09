@@ -1,10 +1,7 @@
 import Tabs from './components/tabs.js';
 
 const tabsElements = document.querySelectorAll('tabs');
-const tabs = [];
-Array.prototype.forEach.call(tabsElements, tabsElement => tabs.push(new Tabs({
-  element: tabsElement,
-})));
+[...tabsElements].forEach(element => new Tabs({ element }));
 
 const tabsElement = document.querySelector('tabs');
 tabsElement.addEventListener('tab-selected', (event) => {

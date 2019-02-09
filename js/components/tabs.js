@@ -5,10 +5,12 @@ export default class Tabs extends Component {
     super({ element });
 
 
-    this._tabs = [];
-    Array.prototype.forEach.call(this._element.children, el => this._getTabObject(el));
+    this._tabs = [...this._element.children].filter(el => el.matches('tab')).map((el) => {
+      const tabTitle = el.getAttribute('title') || 'no-name';
+      return { title: tabTitle, content: el.textContent };
+    });
 
-    this._currentTab = 0;
+    this._currentTabIndex = 0;
 
     this.getCurrentTabData = this.getCurrentTabData.bind(this);
 
@@ -17,16 +19,16 @@ export default class Tabs extends Component {
     this.on('click', 'tab-header', (event) => {
       const { tabId } = event.target.dataset;
 
-      this._currentTab = tabId;
+      this._currentTabIndex = tabId;
 
-      this._element.querySelector('[data-element = "tab-content"]').textContent = this._tabs[this._currentTab].content;
+      this._element.querySelector('[data-element = "tab-content"]').textContent = this._tabs[this._currentTabIndex].content;
 
       this._highlightActiveTab(event.target);
 
       const tabSelectEvent = new CustomEvent('tab-selected', {
         detail: {
-          title: this._tabs[this._currentTab].title,
-          content: this._tabs[this._currentTab].content,
+          title: this._tabs[this._currentTabIndex].title,
+          content: this._tabs[this._currentTabIndex].content,
         },
       });
       this._element.dispatchEvent(tabSelectEvent);
@@ -34,12 +36,7 @@ export default class Tabs extends Component {
   }
 
   getCurrentTabData() {
-    return this._tabs[this._currentTab];
-  }
-
-  _getTabObject(el) {
-    const tabTitle = el.getAttribute('title') ? el.getAttribute('title') : 'no-name';
-    this._tabs.push({ title: tabTitle, content: el.textContent });
+    return this._tabs[this._currentTabIndex];
   }
 
   _highlightActiveTab(currentTab) {
